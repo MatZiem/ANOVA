@@ -1,32 +1,46 @@
 import numpy as np
 import pandas as pd
-from sklearn import datasets
-from sklearn import feature_selection
-import scipy.stats as stats
-from sklearn.feature_selection import SelectKBest, f_classif
+from scipy import special, stats
+from scipy.sparse import issparse
+from sklearn.feature_selection import f_classif
+from sklearn.utils import (as_float_array, check_array, check_X_y, safe_sqr,
+                     safe_mask)
 
-data = pd.read_csv("hepatitis.csv", header=None)
-#dataset = np.genfromtxt("hepatitis.csv", delimiter=",")
-X = data.iloc[:, :-1].values
-y = data.iloc[:, -1].values
+dataset = 'australian'
+dataset = np.genfromtxt("%s.csv" % (dataset), delimiter=",")
+X = dataset[:, :-1]
+y = dataset[:, -1].astype(int)
 
-F, p = feature_selection.f_classif(X, y)
-print(p<0.05)
-X_new = SelectKBest(f_classif, 6).fit_transform(X, y)
-#n, k = X.shape
-#x_mean = X.mean(axis = 0)
-#overall_mean = x_mean.mean()
+X, y = check_X_y(X, y, accept_sparse=['csr', 'csc', 'coo'])
+args = [X[safe_mask(X, y == k)] for k in np.unique(y)]
 
-#sb = n*(x_mean-overall_mean)**2
-#ssb = sb.sum()
-#dfb = k - 1
-#msb = ssb/dfb
+n_classes = len(args)
+args = [as_float_array(a) for a in args]
+n_samples_per_class = np.array([a.shape[0] for a in args])
+n_samples = np.sum(n_samples_per_class)
+ss_alldata = sum(safe_sqr(a).sum(axis=0) for a in args)
+sums_args = [np.asarray(a.sum(axis=0)) for a in args]
+square_of_sums_alldata = sum(sums_args) ** 2
+square_of_sums_args = [s ** 2 for s in sums_args]
+sstot = ss_alldata - square_of_sums_alldata / float(n_samples)
+ssbn = 0.
+for k, _ in enumerate(args):
+    ssbn += square_of_sums_args[k] / n_samples_per_class[k]
+ssbn -= square_of_sums_alldata / float(n_samples)
+sswn = sstot - ssbn
+dfbn = n_classes - 1
+dfwn = n_samples - n_classes
+msb = ssbn / float(dfbn)
+msw = sswn / float(dfwn)
+constant_features_idx = np.where(msw == 0.)[0]
+if (np.nonzero(msb)[0].size != msb.size and constant_features_idx.size):
+    warnings.warn("Features %s are constant." % constant_features_idx,
+                    UserWarning)
+f = msb / msw
+# flatten matrix to vector in sparse case
+#f = np.asarray(f).ravel()
+prob = special.fdtrc(dfbn, dfwn, f)
 
-#sw = (X - x_mean)**2
-#ssw = sw.sum()
-#dfw = k*(n-1)
-#msw = ssw/dfw
-#F = msb/msw
-
-#alfa = 0.05
-#F_crit = stats.f.ppf(1-alfa, dfb, dfw)
+i = np.argsort(prob)
+X = X[:,i]
+X = X[:,0:5]
