@@ -1,30 +1,19 @@
 import numpy as np
 from sklearn.feature_selection import f_classif
+from sklearn.utils.validation import check_X_y
 
+class ANOVA():
 
-def ANOVA(X, y):
-    """
-    This function implements the anova f_value feature selection (existing method for classification in scikit-learn),
-    where f_score = sum((ni/(c-1))*(mean_i - mean)^2)/((1/(n - c))*sum((ni-1)*std_i^2))
-    Input
-    -----
-    X: {numpy array}, shape (n_samples, n_features)
-        input data
-    y : {numpy array},shape (n_samples,)
-        input class labels
-    Output
-    ------
-    F: {numpy array}, shape (n_features,)
-        f-score for each feature
-    """
+    def __init__ (self, k = 5):
+        self.k = k
 
-    F, pval = f_classif(X, y)
-    return F
+    def fit(self, X, y):
+        X, y = check_X_y(X, y)
+        return X, y
 
-
-def feature_ranking(F):
-    """
-    Rank features in descending order according to f-score, the higher the f-score, the more important the feature is
-    """
-    idx = np.argsort(F)
-    return idx[::-1]
+    def fit_transform(self, X, y):
+        F, p = f_classif(X, y)
+        idx = np.argsort(F)
+        idx_t = idx[::-1]
+        selected_features = X[:, idx[0:self.k]]
+        return selected_features
