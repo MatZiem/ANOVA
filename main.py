@@ -2,18 +2,15 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import StratifiedKFold
-from f_score import ANOVA
-from sklearn.decomposition import PCA
-
-
+from anova import ANOVA
 
 # load data
-data = np.genfromtxt("sonar.csv", delimiter=",")
+data = np.genfromtxt("australian.csv", delimiter=",")
 
 X = data[:, :-1]
 y = data[:, -1]
 
-anova = ANOVA(k=6)
+anova = ANOVA(k=4)
 anova.fit(X, y)
 X_new = anova.fit_transform(X, y)
 
