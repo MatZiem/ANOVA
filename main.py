@@ -20,7 +20,7 @@ redus = {
     'PCA': PCA(n_components=k),
     'SelectKBest': SelectKBest(score_func=f_regression, k=k)
 }
-datasets = ["australian", "magic", "ring", "segment", "shuttle", "spectfheart", "thyroid", "vehicle", "wine", "zoo"]
+datasets = ["australian", "ring", "shuttle", "spectfheart", "thyroid", "wine", "vehicle", "magic", "penbased", "vowel"]
 n_datasets = len(datasets)
 n_splits = 5
 skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1410)
