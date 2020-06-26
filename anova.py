@@ -16,8 +16,7 @@ class ANOVA():
         #sprwdzenie wartości F-score i p_value dla kazdej kolumny
         F, p = f_classif(X, y)
         #sortowanie po F-score malejaco
-        idx = np.argsort(F)
-        idx_t = idx[::-1]
+        idx = np.argsort(-F)
         #wybranie k pierwszy wartości z największym F-score
         selected_features = X[:, idx[0:self.k]]
         return selected_features
