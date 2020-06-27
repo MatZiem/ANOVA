@@ -1,5 +1,4 @@
 import numpy as np
-from sklearn.feature_selection import f_classif
 from sklearn.utils.validation import check_X_y
 
 class ANOVA():
