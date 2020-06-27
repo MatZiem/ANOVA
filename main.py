@@ -7,18 +7,17 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import f_classif
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest
-from scipy.stats import rankdata
-from scipy.stats import ranksums
+from scipy.stats import rankdata, ranksums
 from tabulate import tabulate
 from anova import ANOVA
 
-k=4
+k=1
 
 redus = {
     'PCA': PCA(n_components=k),
     'SelectKBest': SelectKBest(score_func=f_classif, k=k)
 }
-datasets = ["soybean", "german", "australian", "digit", "heart", "wisconsin", "breastcan", "breastcancoimbra", "magic", "vovel"]
+datasets = ["australian", "breastcan", "breastcancoimbra", "digit", "german", "heart", "magic", "soybean", "vovel", "wisconsin"]
 n_datasets = len(datasets)
 n_splits = 5
 skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1410)
@@ -64,11 +63,13 @@ for data_id, dataset in enumerate(datasets):
     dataset = np.genfromtxt("datasets/%s.csv" % (dataset), delimiter=",")
     X = dataset[:, :-1]
     y = dataset[:, -1].astype(int)
+    scaler = StandardScaler()
+    scaled_data = scaler.fit_transform(X)
 
     for fold_id, (train, test) in enumerate(skf.split(X, y)):
         clf = GaussianNB()
-        clf.fit(X[train], y[train])
-        y_pred = clf.predict(X[test])
+        clf.fit(scaled_data[train], y[train])
+        y_pred = clf.predict(scaled_data[test])
         scores[3, data_id, fold_id] = accuracy_score(y[test], y_pred)
 
 np.save('results', scores)
@@ -76,6 +77,7 @@ np.save('results', scores)
 scores = np.load('results.npy')
 
 mean_scores = np.mean(scores, axis=2).T
+
 ranks = []
 for ms in mean_scores:
     ranks.append(rankdata(ms).tolist())

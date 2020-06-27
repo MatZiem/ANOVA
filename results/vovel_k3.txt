@@ -1,0 +1,44 @@
+ANOVA: 0.571
+PCA: 0.365
+SelectKBest: 0.571
+Model bazowy: 0.657
+
+w-statistic:
+                 ANOVA    PCA    SelectKBest    Model bazowy
+------------  -------  -----  -------------  --------------
+ANOVA            0.00   1.00           0.00           -1.00
+PCA             -1.00   0.00          -1.00           -1.00
+SelectKBest      0.00   1.00           0.00           -1.00
+Model bazowy     1.00   1.00           1.00            0.00 
+
+p-value:
+                 ANOVA    PCA    SelectKBest    Model bazowy
+------------  -------  -----  -------------  --------------
+ANOVA            1.00   0.32           1.00            0.32
+PCA              0.32   1.00           0.32            0.32
+SelectKBest      1.00   0.32           1.00            0.32
+Model bazowy     0.32   0.32           0.32            1.00
+
+Advantage:
+                 ANOVA    PCA    SelectKBest    Model bazowy
+------------  -------  -----  -------------  --------------
+ANOVA               0      1              0               0
+PCA                 0      0              0               0
+SelectKBest         0      1              0               0
+Model bazowy        1      1              1               0
+
+Statistical significance (alpha = 0.05):
+                 ANOVA    PCA    SelectKBest    Model bazowy
+------------  -------  -----  -------------  --------------
+ANOVA               0      0              0               0
+PCA                 0      0              0               0
+SelectKBest         0      0              0               0
+Model bazowy        0      0              0               0
+
+Statistically significantly better:
+                 ANOVA    PCA    SelectKBest    Model bazowy
+------------  -------  -----  -------------  --------------
+ANOVA               0      0              0               0
+PCA                 0      0              0               0
+SelectKBest         0      0              0               0
+Model bazowy        0      0              0               0
