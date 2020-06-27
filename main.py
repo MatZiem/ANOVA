@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.naive_bayes import GaussianNB
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import StratifiedKFold
-from sklearn.feature_selection import f_regression
+from sklearn.feature_selection import f_classif
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest
 from scipy.stats import rankdata
@@ -12,19 +12,17 @@ from scipy.stats import ranksums
 from tabulate import tabulate
 from anova import ANOVA
 
-k=3
-clfs = {
-    'GNB': GaussianNB(),
-}
+k=4
+
 redus = {
     'PCA': PCA(n_components=k),
-    'SelectKBest': SelectKBest(score_func=f_regression, k=k)
+    'SelectKBest': SelectKBest(score_func=f_classif, k=k)
 }
-datasets = ["australian", "ring", "shuttle", "spectfheart", "thyroid", "wine", "vehicle", "magic", "penbased", "vowel"]
+datasets = ["soybean", "german", "australian", "digit", "heart", "wisconsin", "breastcan", "breastcancoimbra", "magic", "vovel"]
 n_datasets = len(datasets)
 n_splits = 5
 skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1410)
-anova = ANOVA(k)
+anova = ANOVA(k=k)
 scores = np.zeros((4, n_datasets, n_splits))
 
 #Klasyfikacja dla ANOVA - 0
