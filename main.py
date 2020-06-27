@@ -11,13 +11,13 @@ from scipy.stats import rankdata, ranksums
 from tabulate import tabulate
 from anova import ANOVA
 
-k=1
+k=3
 
 redus = {
     'PCA': PCA(n_components=k),
     'SelectKBest': SelectKBest(score_func=f_classif, k=k)
 }
-datasets = ["australian", "breastcan", "breastcancoimbra", "digit", "german", "heart", "magic", "soybean", "vovel", "wisconsin"]
+datasets = ["australian"]#, "breastcan", "breastcancoimbra", "digit", "german", "heart", "magic", "soybean", "vovel", "wisconsin"]
 n_datasets = len(datasets)
 n_splits = 5
 skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1410)
@@ -48,9 +48,9 @@ for data_id, dataset in enumerate(datasets):
     scaler = StandardScaler()
     scaled_data = scaler.fit_transform(X)
 
-    for redu_id, redu_name in enumerate(redus):
-        redu = clone(redus[redu_name])
-        for fold_id, (train, test) in enumerate(skf.split(X, y)):
+    for fold_id, (train, test) in enumerate(skf.split(X, y)):
+        for redu_id, redu_name in enumerate(redus):
+            redu = clone(redus[redu_name])
             X_new = redu.fit_transform(scaled_data, y)
             clf = GaussianNB()
             clf.fit(X_new[train], y[train])
