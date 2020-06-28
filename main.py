@@ -11,36 +11,20 @@ from scipy.stats import rankdata, ranksums
 from tabulate import tabulate
 from anova import ANOVA
 
-k=3
+k=1
 
 redus = {
+    "ANOVA": ANOVA(k=k),
     'PCA': PCA(n_components=k),
     'SelectKBest': SelectKBest(score_func=f_classif, k=k)
 }
-datasets = ["australian"]#, "breastcan", "breastcancoimbra", "digit", "german", "heart", "magic", "soybean", "vovel", "wisconsin"]
+datasets = ["australian", "breastcan", "breastcancoimbra", "digit", "german", "heart", "magic", "soybean", "vovel", "wisconsin"]
 n_datasets = len(datasets)
 n_splits = 5
 skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=1410)
-anova = ANOVA(k=k)
 scores = np.zeros((4, n_datasets, n_splits))
 
-#Klasyfikacja dla ANOVA - 0
-for data_id, dataset in enumerate(datasets):
-    dataset = np.genfromtxt("datasets/%s.csv" % (dataset), delimiter=",")
-    X = dataset[:, :-1]
-    y = dataset[:, -1].astype(int)
-    scaler = StandardScaler()
-    scaled_data = scaler.fit_transform(X)
-
-    for fold_id, (train, test) in enumerate(skf.split(X, y)):
-        X_new = anova.fit_transform(scaled_data, y)
-        clf = GaussianNB()
-        clf.fit(X_new[train], y[train])
-        y_pred = clf.predict(X_new[test])
-        scores[0, data_id, fold_id] = accuracy_score(y[test], y_pred)
-
-
-#Klasyfikacja dla PCA - 1 i SelectKBast - 2
+#Klasyfikacja dla ANOVY-0, PCA - 1 oraz SelectKBast - 2
 for data_id, dataset in enumerate(datasets):
     dataset = np.genfromtxt("datasets/%s.csv" % (dataset), delimiter=",")
     X = dataset[:, :-1]
@@ -55,8 +39,7 @@ for data_id, dataset in enumerate(datasets):
             clf = GaussianNB()
             clf.fit(X_new[train], y[train])
             y_pred = clf.predict(X_new[test])
-            scores[redu_id + 1, data_id, fold_id] = accuracy_score(y[test], y_pred)
-
+            scores[redu_id, data_id, fold_id] = accuracy_score(y[test], y_pred)
 
 #Klasyfikacja dla modelu bez selekcji - 3
 for data_id, dataset in enumerate(datasets):

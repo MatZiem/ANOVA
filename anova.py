@@ -1,7 +1,8 @@
 import numpy as np
 from sklearn.utils.validation import check_X_y
+from sklearn.base import BaseEstimator
 
-class ANOVA():
+class ANOVA(BaseEstimator):
 
     def __init__ (self, k = 5):
         self.k = k
